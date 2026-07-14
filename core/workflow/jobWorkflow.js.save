@@ -1,0 +1,99 @@
+const parser = require("../../intelligence/jobParser");
+const { normalize } = require("../../intelligence/jobNormalizer");;
+
+const { analyzeRisk } = require("../../services/riskAnalyzer");
+const { scoreJob } = require("../../services/scoringEngine");
+const { decide } = require("../../services/recruiterAgent");
+
+const jobService = require("../../services/jobService");
+const sessionService = require("../../services/sessionService");
+
+const eventBus = require("../../services/eventBus");
+const recruiterQueue =
+require("../../services/recruiterQueueService");
+
+async function runJobWorkflow({ userId, text }) {
+
+  const session = await sessionService.getSession(userId);
+
+  if (!session) {
+    console.log("NO SESSION - CONTINUING ANYWAY");
+  }
+
+  // 1. PARSE
+  const raw = await parser.jobParser(text);
+
+  // 2. NORMALIZE
+  const job = normalize(raw);
+
+  eventBus.emit("job.parsed", { userId, job });
+
+  // 3. RISK
+  const risk = analyzeRisk(job);
+
+  // 4. SCORE
+  const scoreData = scoreJob(job, risk);
+
+  // 5. DECISION
+  const recommendationRaw = decide(job, scoreData);
+
+const recommendation = {
+  action: recommendationRaw.action || "REVIEW",
+  label: recommendationRaw.label || "⚠️ MEDIUM MATCH",
+  reason: recommendationRaw.reason || "No analysis available"
+};
+
+  // 6. SAVE OBJECT
+  const saved = {
+    ...job,
+    created_at: Date.now(),
+    score: scoreData.score
+  };
+
+  // 7. RECRUITER QUEUE
+  if (scoreData.score >= 800) {
+    recruiterQueue.push(userId, saved);
+  }
+
+  // 8. MEMORY
+  await sessionService.appendMemory(userId, "lastJob", saved);
+
+  // 9. FEED
+  const jobFeedService = require("../../services/jobFeedService");
+
+const existingFeed = jobFeedService.getFeed(userId) || [];
+
+jobFeedService.setFeed(userId, [
+  saved,
+  ...existingFeed.filter(j => j.created_at !== saved.created_at)
+]);
+
+  // 10. CLEANUP
+  await sessionService.deleteSession(userId);
+
+  eventBus.emit("job.completed", { userId, job: saved });
+
+  jobFeedService.clearFeed(userId);
+
+  // 11. RETURN
+  return {
+  type: "job",
+
+  job: saved,
+
+  score: {
+    score: scoreData.score || 0,
+    grade: scoreData.grade || "C"
+  },
+
+  recommendation: {
+    action: recommendation.action || "REVIEW",
+    label: recommendation.label || "⚠️ MEDIUM MATCH",
+    reason: recommendation.reason || "No analysis available"
+  }
+};
+}
+
+module.exports = {
+  runJobWorkflow
+};

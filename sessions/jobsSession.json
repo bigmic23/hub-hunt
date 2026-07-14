@@ -1,0 +1,21 @@
+{
+  "342761950": {
+    "step": "REVIEW",
+    "data": {
+      "company": "Acme Health",
+      "role": "Remote role",
+      "location": "Remote",
+      "salary": null,
+      "contact": null,
+      "notes": null
+    },
+    "memory": [],
+    "profile": {
+      "jobSeekerLevel": 0,
+      "supportLevel": 0,
+      "healthcareInterest": 0,
+      "reliabilityScore": 0.5
+    },
+    "updatedAt": 1781711765217
+  }
+}
