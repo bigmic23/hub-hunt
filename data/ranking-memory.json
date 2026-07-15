@@ -1,0 +1,20 @@
+{
+  "acceptedRoles": {
+    "customer support": 5
+  },
+  "rejectedRoles": {
+    "customer support": 4
+  },
+  "acceptedModes": {
+    "": 5
+  },
+  "rejectedModes": {
+    "": 4
+  },
+  "acceptedCities": {
+    "": 5
+  },
+  "rejectedCities": {
+    "": 4
+  }
+}

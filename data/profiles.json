@@ -1,0 +1,158 @@
+{
+  "342761950": {
+    "userId": "342761950",
+    "cvProfile": {
+      "history": [
+        {
+          "type": "SAVED",
+          "job": {
+            "id": "customer-support-specialist-medtech-saas-munich-272975",
+            "title": "Customer Support Specialist - MedTech SaaS (w/m/d)",
+            "company": "ONCARE GmbH",
+            "location": "Munich",
+            "salary": "Not specified",
+            "applyUrl": "https://www.arbeitnow.com/jobs/companies/oncare-gmbh/customer-support-specialist-medtech-saas-munich-272975",
+            "source": "Arbeitnow",
+            "score": 55
+          }
+        },
+        {
+          "type": "SAVED",
+          "job": {
+            "id": "customer-support-specialist-medtech-saas-munich-272975",
+            "title": "Customer Support Specialist - MedTech SaaS (w/m/d)",
+            "company": "ONCARE GmbH",
+            "location": "Munich",
+            "salary": "Not specified",
+            "applyUrl": "https://www.arbeitnow.com/jobs/companies/oncare-gmbh/customer-support-specialist-medtech-saas-munich-272975",
+            "source": "Arbeitnow",
+            "score": 55
+          }
+        },
+        {
+          "type": "REJECTED",
+          "job": {
+            "id": "customer-support-specialist-medtech-saas-munich-272975",
+            "title": "Customer Support Specialist - MedTech SaaS (w/m/d)",
+            "company": "ONCARE GmbH",
+            "location": "Munich",
+            "salary": "Not specified",
+            "applyUrl": "https://www.arbeitnow.com/jobs/companies/oncare-gmbh/customer-support-specialist-medtech-saas-munich-272975",
+            "source": "Arbeitnow",
+            "score": 55
+          }
+        },
+        {
+          "type": "SAVED",
+          "job": {
+            "id": "customer-support-specialist-medtech-saas-munich-272975",
+            "title": "Customer Support Specialist - MedTech SaaS (w/m/d)",
+            "company": "ONCARE GmbH",
+            "location": "Munich",
+            "salary": "Not specified",
+            "applyUrl": "https://www.arbeitnow.com/jobs/companies/oncare-gmbh/customer-support-specialist-medtech-saas-munich-272975",
+            "source": "Arbeitnow",
+            "score": 55
+          }
+        },
+        {
+          "type": "REJECTED",
+          "job": {
+            "id": "customer-support-specialist-medtech-saas-munich-272975",
+            "title": "Customer Support Specialist - MedTech SaaS (w/m/d)",
+            "company": "ONCARE GmbH",
+            "location": "Munich",
+            "salary": "Not specified",
+            "applyUrl": "https://www.arbeitnow.com/jobs/companies/oncare-gmbh/customer-support-specialist-medtech-saas-munich-272975",
+            "source": "Arbeitnow",
+            "score": 55
+          }
+        },
+        {
+          "type": "SAVED",
+          "job": {
+            "id": "customer-support-specialist-medtech-saas-munich-272975",
+            "title": "Customer Support Specialist - MedTech SaaS (w/m/d)",
+            "company": "ONCARE GmbH",
+            "location": "Munich",
+            "salary": "Not specified",
+            "applyUrl": "https://www.arbeitnow.com/jobs/companies/oncare-gmbh/customer-support-specialist-medtech-saas-munich-272975",
+            "source": "Arbeitnow",
+            "score": 55
+          }
+        },
+        {
+          "type": "REJECTED",
+          "job": {
+            "id": "customer-support-specialist-medtech-saas-munich-272975",
+            "title": "Customer Support Specialist - MedTech SaaS (w/m/d)",
+            "company": "ONCARE GmbH",
+            "location": "Munich",
+            "salary": "Not specified",
+            "applyUrl": "https://www.arbeitnow.com/jobs/companies/oncare-gmbh/customer-support-specialist-medtech-saas-munich-272975",
+            "source": "Arbeitnow",
+            "score": 55
+          }
+        },
+        {
+          "type": "SAVED",
+          "job": {
+            "id": "customer-support-specialist-medtech-saas-munich-272975",
+            "title": "Customer Support Specialist - MedTech SaaS (w/m/d)",
+            "company": "ONCARE GmbH",
+            "location": "Munich",
+            "salary": "Not specified",
+            "applyUrl": "https://www.arbeitnow.com/jobs/companies/oncare-gmbh/customer-support-specialist-medtech-saas-munich-272975",
+            "source": "Arbeitnow",
+            "score": 55
+          }
+        },
+        {
+          "type": "REJECTED",
+          "job": {
+            "id": "customer-support-specialist-medtech-saas-munich-272975",
+            "title": "Customer Support Specialist - MedTech SaaS (w/m/d)",
+            "company": "ONCARE GmbH",
+            "location": "Munich",
+            "salary": "Not specified",
+            "applyUrl": "https://www.arbeitnow.com/jobs/companies/oncare-gmbh/customer-support-specialist-medtech-saas-munich-272975",
+            "source": "Arbeitnow",
+            "score": 55
+          }
+        }
+      ],
+      "cvProfile": {
+        "skillStrength": {
+          "customer": 5,
+          "support": 5,
+          "specialist": 5,
+          "medtech": 5,
+          "saas": 5,
+          "(w/m/d)": 5
+        },
+        "rolePreference": {
+          "customer support specialist - medtech saas (w/m/d)": 5
+        },
+        "rejectionReasons": {
+          "customer support specialist - medtech saas (w/m/d)": 4
+        },
+        "embeddingHints": {
+          "topTitles": [
+            "customer support specialist - medtech saas (w/m/d)",
+            "customer support specialist - medtech saas (w/m/d)",
+            "customer support specialist - medtech saas (w/m/d)",
+            "customer support specialist - medtech saas (w/m/d)",
+            "customer support specialist - medtech saas (w/m/d)"
+          ],
+          "topSkills": []
+        },
+        "salaryExpectation": null
+      }
+    },
+    "weights": {
+      "skillMatch": 1.2500000000000002,
+      "roleMatch": 1.4000000000000004,
+      "salaryMatch": 1
+    }
+  }
+}

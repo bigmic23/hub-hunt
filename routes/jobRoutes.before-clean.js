@@ -360,15 +360,13 @@ ${app.body}`,
 bot.action("next_job", async (ctx) => {
     const userId = String(ctx.from.id);
 
-    console.log("FEED DEBUG:", jobFeedService.debug(userId));
-
     const { job, done } = jobFeedService.getNextJob(userId);
 
     if (done || !job) {
         return ctx.answerCbQuery("No more jobs.");
     }
 
-    await ctx.reply(
+    await ctx.editMessageText(
         `💼 ${job.title}
 🏢 ${job.company}
 📍 ${job.location}
