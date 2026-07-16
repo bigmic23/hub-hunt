@@ -2,6 +2,7 @@ const arbeitnow = require("./sources/arbeitnow");
 const adzuna = require("./sources/adzuna");
 const remotive = require("./sources/remotive");
 const remoteok = require("./sources/remoteok");
+const myjobmag = require("./sources/myjobmag");
 
 async function fetchAllJobs() {
 
@@ -13,7 +14,9 @@ async function fetchAllJobs() {
 
         remotive(),
 
-        remoteok()
+        remoteok(),
+
+        myjobmag()
 
     ]);
 
