@@ -1,15 +1,57 @@
-const manager = require("./jobSourceManager");
-const arbeitnow = require("./api/arbeitnow");
-
-// Register only implemented sources
-manager.register(arbeitnow);
-
-// Register these after you implement them
-// manager.register(require("./rss/remoteok"));
-// manager.register(require("./company/siemens"));
+const arbeitnow = require("./sources/arbeitnow");
+const adzuna = require("./sources/adzuna");
+const remotive = require("./sources/remotive");
+const remoteok = require("./sources/remoteok");
 
 async function fetchAllJobs() {
-    return await manager.fetchJobs();
+
+    const results = await Promise.allSettled([
+
+        arbeitnow(),
+
+        adzuna(),
+
+        remotive(),
+
+        remoteok()
+
+    ]);
+
+    let jobs = [];
+
+    for (const result of results) {
+
+        if (
+            result.status === "fulfilled" &&
+            Array.isArray(result.value)
+        ) {
+
+            jobs.push(...result.value);
+
+        }
+
+    }
+
+    const seen = new Set();
+
+    return jobs.filter(job => {
+
+        if (!job.id)
+            return false;
+
+        if (seen.has(job.id))
+            return false;
+
+        seen.add(job.id);
+
+        return true;
+
+    });
+
 }
 
-module.exports = { fetchAllJobs };
+module.exports = {
+
+    fetchAllJobs
+
+};

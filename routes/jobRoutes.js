@@ -259,6 +259,11 @@ ${reasons.length ? reasons.join("\n") : "⚠️ No CV saved — type /cv to save
 
     const job = jobFeedService.getCurrentJob(userId);
 
+    console.log("SAVE DEBUG:", {
+      userId,
+      currentJob: job
+    });
+
     if (!job) {
         return ctx.answerCbQuery("No active job.");
     }

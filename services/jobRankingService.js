@@ -1,8 +1,10 @@
-function rankJobs(jobs, profile = {}) {
+const { getUserStats } = require("./ai/memory/recruiterMemoryDB");
 
-    const skills = (profile.skills || [])
-        .map(s => s.toLowerCase());
+async function rankJobs(jobs = [], profile = {}) {
 
+    const stats = await getUserStats(profile.userId);
+
+    const skills = (profile.skills || []).map(s => s.toLowerCase());
 
     return jobs
         .map(job => {
@@ -11,51 +13,180 @@ function rankJobs(jobs, profile = {}) {
 
             const title = (job.title || "").toLowerCase();
             const company = (job.company || "").toLowerCase();
+            const location = (
+                job.location ||
+                job.country ||
+                ""
+            ).toLowerCase();
 
-            const text = title + " " + company;
+            const text =
+                title +
+                " " +
+                company +
+                " " +
+                location;
 
+            //--------------------------------------------------
+            // Learned interests
+            //--------------------------------------------------
 
             skills.forEach(skill => {
-                if (text.includes(skill)) {
-                    score += 10;
-                }
+
+                if (text.includes(skill))
+                    score += 18;
+
             });
 
+            //--------------------------------------------------
+            // Remote / Hybrid / On-site
+            //--------------------------------------------------
 
-            // Strong healthcare assistant matches
-            if (title.includes("healthcare assistant")) score += 50;
-            if (title.includes("care assistant")) score += 50;
-            if (title.includes("nursing assistant")) score += 50;
-            if (title.includes("pflege")) score += 50;
+            if (text.includes("remote"))
+                score += 35;
 
+            if (text.includes("hybrid"))
+                score += 25;
 
-            // Healthcare related but not assistant
-            if (title.includes("healthcare")) score += 15;
-            if (title.includes("medical")) score += 15;
+            if (
+                text.includes("on-site") ||
+                text.includes("onsite")
+            )
+                score += 12;
 
+            //--------------------------------------------------
+            // Visa sponsorship
+            //--------------------------------------------------
 
-            // Support roles
-            if (title.includes("customer support")) score += 20;
-            if (title.includes("support specialist")) score += 15;
+            if (
+                text.includes("visa") ||
+                text.includes("relocation") ||
+                text.includes("sponsorship")
+            )
+                score += 45;
 
+            //--------------------------------------------------
+            // High-demand industries
+            //--------------------------------------------------
 
-            // Penalize senior/expert roles
-            if (title.includes("senior")) score -= 25;
-            if (title.includes("consultant")) score -= 20;
-            if (title.includes("manager")) score -= 20;
+            const demand = [
 
+                "software",
+                "developer",
+                "engineer",
+                "data",
+                "ai",
+                "cloud",
+
+                "customer support",
+                "customer success",
+                "sales",
+
+                "marketing",
+                "digital marketing",
+
+                "finance",
+                "accountant",
+
+                "healthcare",
+                "nurse",
+                "care",
+
+                "teacher",
+                "education",
+
+                "project manager",
+
+                "product manager",
+
+                "cybersecurity",
+
+                "devops",
+
+                "hr",
+
+                "recruiter",
+
+                "business analyst",
+
+                "administration",
+
+                "operations",
+
+                "logistics",
+
+                "supply chain"
+
+            ];
+
+            demand.forEach(keyword => {
+
+                if (text.includes(keyword))
+                    score += 10;
+
+            });
+
+            //--------------------------------------------------
+            // Nigeria boost
+            //--------------------------------------------------
+
+            if (
+                location.includes("nigeria") ||
+                location.includes("lagos") ||
+                location.includes("abuja") ||
+                location.includes("port harcourt")
+            )
+                score += 25;
+
+            //--------------------------------------------------
+            // Global countries
+            //--------------------------------------------------
+
+            [
+                "canada",
+                "germany",
+                "netherlands",
+                "united kingdom",
+                "uk",
+                "ireland",
+                "usa",
+                "united states",
+                "australia",
+                "new zealand",
+                "sweden",
+                "norway",
+                "denmark",
+                "finland",
+                "switzerland",
+                "austria"
+            ].forEach(country => {
+
+                if (location.includes(country))
+                    score += 20;
+
+            });
+
+            //--------------------------------------------------
+            // Learn from behaviour
+            //--------------------------------------------------
+
+            score +=
+                (stats.saved || 0) * 2 +
+                (stats.applied || 0) * 5;
 
             return {
+
                 ...job,
                 score
+
             };
 
         })
-        .sort((a,b)=> b.score - a.score);
+        .sort((a, b) => b.score - a.score);
 
 }
 
-
 module.exports = {
+
     rankJobs
+
 };

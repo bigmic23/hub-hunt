@@ -15,6 +15,13 @@ job,
 action,
 context = {}
 ) {
+
+console.log("RECORD ACTION:", {
+    userId,
+    jobId: job?.id,
+    action
+});
+
 if (!userId || !job?.id)
 return;
 
@@ -36,6 +43,11 @@ city: job.city
 created_at: Date.now()
 }
 ]);
+
+console.log(
+    "SUPABASE INSERT:",
+    error ? error.message : "SUCCESS"
+);
 
 if (error) {
 console.error(
