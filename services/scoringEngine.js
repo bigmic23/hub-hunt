@@ -70,7 +70,10 @@ function scoreJobForUser(job, profile = {}) {
   const weightedScore =
     applyWeights(components, weights);
 
-  const finalScore = Math.round(weightedScore * 1000);
+  const finalScore = Math.min(
+    1000,
+    Math.round(weightedScore * 100)
+);
 
   let grade = "C";
   if (finalScore >= 800) grade = "A";

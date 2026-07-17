@@ -1,192 +1,261 @@
 const { getUserStats } = require("./ai/memory/recruiterMemoryDB");
 
+const STOP_WORDS = new Set([
+    "remote",
+    "hybrid",
+    "onsite",
+    "on-site",
+    "full",
+    "stack",
+    "senior",
+    "junior",
+    "manager",
+    "lead",
+    "director",
+    "the",
+    "and",
+    "job",
+    "position",
+    "role",
+    "mwd",
+    "mw",
+    "wmd"
+]);
+
+const DEMAND_FIELDS = [
+    "software",
+    "developer",
+    "engineer",
+    "backend",
+    "frontend",
+    "fullstack",
+    "node",
+    "node.js",
+    "javascript",
+    "typescript",
+    "python",
+    "java",
+    "php",
+    "react",
+    "vue",
+    "angular",
+    "sql",
+    "cloud",
+    "aws",
+    "azure",
+    "docker",
+    "kubernetes",
+    "devops",
+    "ai",
+    "data",
+    "analyst",
+    "security",
+    "cybersecurity",
+    "customer",
+    "support",
+    "success",
+    "sales",
+    "marketing",
+    "finance",
+    "product",
+    "operations"
+];
+
+function tokenize(text = "") {
+    return new Set(
+        text
+            .toLowerCase()
+            .replace(/[^a-z0-9+#.\- ]/g, " ")
+            .split(/\s+/)
+            .filter(Boolean)
+    );
+}
+
 async function rankJobs(jobs = [], profile = {}) {
 
     const stats = await getUserStats(profile.userId);
 
-    const skills = (profile.skills || []).map(s => s.toLowerCase());
+    const skills = (profile.skills || [])
+        .map(s => s.toLowerCase().trim())
+        .filter(s => s.length > 2)
+        .filter(s => !STOP_WORDS.has(s));
 
-    return jobs
-        .map(job => {
 
-            let score = 0;
+    const learnedRoles = profile.preferredRoles || {};
 
-            const title = (job.title || "").toLowerCase();
-            const company = (job.company || "").toLowerCase();
-            const location = (
-                job.location ||
-                job.country ||
-                ""
-            ).toLowerCase();
 
-            const text =
-                title +
-                " " +
-                company +
-                " " +
-                location;
+    return jobs.map(job => {
 
-            //--------------------------------------------------
-            // Learned interests
-            //--------------------------------------------------
+        let score = 0;
+        const reasons = [];
 
-            skills.forEach(skill => {
+        const text = [
+            job.title,
+            job.company,
+            job.location,
+            job.country,
+            job.mode
+        ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
 
-                if (text.includes(skill))
-                    score += 18;
 
-            });
+        const words = tokenize(text);
 
-            //--------------------------------------------------
-            // Remote / Hybrid / On-site
-            //--------------------------------------------------
 
-            if (text.includes("remote"))
-                score += 35;
+        // Learned skill match
+        for (const skill of skills) {
 
-            if (text.includes("hybrid"))
+            if (words.has(skill)) {
+
                 score += 25;
+                reasons.push(`Matches skill: ${skill}`);
+            }
+        }
+
+
+        // AI memory preference boost
+        for (const role of Object.keys(learnedRoles)) {
 
             if (
-                text.includes("on-site") ||
-                text.includes("onsite")
-            )
-                score += 12;
+                words.has(role) &&
+                learnedRoles[role] > 0
+            ) {
 
-            //--------------------------------------------------
-            // Visa sponsorship
-            //--------------------------------------------------
+                const boost = Math.min(
+                    learnedRoles[role] * 5,
+                    35
+                );
 
-            if (
-                text.includes("visa") ||
-                text.includes("relocation") ||
-                text.includes("sponsorship")
-            )
-                score += 45;
+                score += boost;
 
-            //--------------------------------------------------
-            // High-demand industries
-            //--------------------------------------------------
+                reasons.push(
+                    `Learning preference: ${role}`
+                );
+            }
+        }
 
-            const demand = [
 
-                "software",
-                "developer",
-                "engineer",
-                "data",
-                "ai",
-                "cloud",
+        // Demand signals
+        for (const keyword of DEMAND_FIELDS) {
 
-                "customer support",
-                "customer success",
-                "sales",
+            if (words.has(keyword)) {
 
-                "marketing",
-                "digital marketing",
+                score += 10;
 
-                "finance",
-                "accountant",
+                reasons.push(
+                    `High-demand field: ${keyword}`
+                );
 
-                "healthcare",
-                "nurse",
-                "care",
+                break;
+            }
+        }
 
-                "teacher",
-                "education",
 
-                "project manager",
+        // Remote preference
+        if (words.has("remote")) {
 
-                "product manager",
+            score += 25;
+            reasons.push("Remote opportunity");
 
-                "cybersecurity",
+        } else if (words.has("hybrid")) {
 
-                "devops",
+            score += 15;
+            reasons.push("Hybrid opportunity");
+        }
 
-                "hr",
 
-                "recruiter",
+        // Visa
+        if (
+            text.includes("visa") ||
+            text.includes("sponsor") ||
+            text.includes("relocation")
+        ) {
 
-                "business analyst",
+            score += 25;
+            reasons.push("Visa sponsorship");
+        }
 
-                "administration",
 
-                "operations",
+        // Salary
+        if (
+            job.salary &&
+            job.salary !== "Not specified"
+        ) {
 
-                "logistics",
+            score += 5;
+            reasons.push("Salary provided");
+        }
 
-                "supply chain"
 
-            ];
+        // Location
+        const location =
+            `${job.location || ""} ${job.country || ""}`
+            .toLowerCase();
 
-            demand.forEach(keyword => {
 
-                if (text.includes(keyword))
-                    score += 10;
+        if (
+            location.includes("nigeria") ||
+            location.includes("lagos")
+        ) {
 
-            });
+            score += 15;
+            reasons.push("Nigeria opportunity");
+        }
 
-            //--------------------------------------------------
-            // Nigeria boost
-            //--------------------------------------------------
 
-            if (
-                location.includes("nigeria") ||
-                location.includes("lagos") ||
-                location.includes("abuja") ||
-                location.includes("port harcourt")
-            )
-                score += 25;
+        const globalCountries = [
+            "germany",
+            "canada",
+            "usa",
+            "united states",
+            "uk",
+            "united kingdom",
+            "ireland",
+            "netherlands",
+            "sweden",
+            "norway"
+        ];
 
-            //--------------------------------------------------
-            // Global countries
-            //--------------------------------------------------
 
-            [
-                "canada",
-                "germany",
-                "netherlands",
-                "united kingdom",
-                "uk",
-                "ireland",
-                "usa",
-                "united states",
-                "australia",
-                "new zealand",
-                "sweden",
-                "norway",
-                "denmark",
-                "finland",
-                "switzerland",
-                "austria"
-            ].forEach(country => {
+        for (const country of globalCountries) {
 
-                if (location.includes(country))
-                    score += 20;
+            if (location.includes(country)) {
 
-            });
+                score += 10;
 
-            //--------------------------------------------------
-            // Learn from behaviour
-            //--------------------------------------------------
+                reasons.push(
+                    `Global opportunity: ${country}`
+                );
 
-            score +=
-                (stats.saved || 0) * 2 +
-                (stats.applied || 0) * 5;
+                break;
+            }
+        }
 
-            return {
 
-                ...job,
-                score
+        // Behaviour reinforcement
+        score += (stats.saved || 0);
+        score += (stats.applied || 0) * 5;
 
-            };
 
-        })
-        .sort((a, b) => b.score - a.score);
+        score = Math.min(
+            0,
+            Math.round(score)
+        );
 
+
+        return {
+            ...job,
+            score,
+            reasons: [...new Set(reasons)]
+        };
+
+    })
+    .sort((a,b)=>b.score-a.score);
 }
 
+
 module.exports = {
-
     rankJobs
-
 };

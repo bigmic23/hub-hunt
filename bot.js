@@ -6,6 +6,9 @@ const bot = new Telegraf(
   process.env.BOT_TOKEN
 );
 
+const { startDailyDigest } = require("./services/dailyDigestScheduler");
+const { validateEnv } = require("./services/startupValidator");
+
 const cron = require("node-cron");
 const { scrapeJobsAndSend } = require("./services/jobFeedService");
 
@@ -22,7 +25,12 @@ module.exports = bot;
 // load routes AFTER export
 require("./routes/jobRoutes")(bot);
 
+// validate
+validateEnv();
+
 // launch LAST
 bot.launch();
 
 console.log("Bot running...");
+
+startDailyDigest(bot);

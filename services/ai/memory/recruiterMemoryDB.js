@@ -1,110 +1,164 @@
 const { createClient } = require("@supabase/supabase-js");
-const { computeReward } = require("../rewardEngine");
 
 const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-/**
- * RECORD ACTION (DEDUP + REWARD + POLICY SAFE)
- */
+function cleanTitle(title = "") {
+
+    return title
+        .replace(/\(.*?\)/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+
+}
+
+
 async function recordAction(
-userId,
-job,
-action,
-context = {}
+    userId,
+    job,
+    action
 ) {
 
-console.log("RECORD ACTION:", {
-    userId,
-    jobId: job?.id,
-    action
-});
+    if (!userId || !job?.id) return false;
 
-if (!userId || !job?.id)
-return;
 
-const { error } =
-await supabase
-.from("recruiter_memory")
-.insert([
-{
-user_id: userId,
-job_id: job.id,
-title: job.title,
-action,
-score: job.score?.score || 0,
-metadata: {
-salary: job.salary,
-mode: job.mode,
-city: job.city
-},
-created_at: Date.now()
+    console.log("RECORD ACTION:", {
+        userId,
+        jobId: job.id,
+        action
+    });
+
+
+    const payload = {
+
+        user_id: userId,
+
+        job_id: job.id,
+
+        title: cleanTitle(job.title),
+
+        action,
+
+        score:
+            typeof job.score === "number"
+                ? job.score
+                : 0,
+
+        metadata: {
+
+            salary: job.salary || null,
+
+            mode: job.mode || null,
+
+            city:
+                job.city ||
+                job.location ||
+                null,
+
+            country: job.country || null,
+
+            source: job.source || null
+
+        },
+
+        created_at: Date.now()
+
+    };
+
+
+    const { error } = await supabase
+        .from("recruiter_memory")
+        .insert([payload]);
+
+
+    console.log(
+        "SUPABASE INSERT:",
+        error ? error.message : "SUCCESS"
+    );
+
+
+    if (error) {
+
+        console.error(
+            "recordAction error:",
+            error.message
+        );
+
+        return false;
+
+    }
+
+
+    return true;
+
 }
-]);
 
-console.log(
-    "SUPABASE INSERT:",
-    error ? error.message : "SUCCESS"
-);
 
-if (error) {
-console.error(
-"recordAction error:",
-error.message
-);
-}
 
-return true;
-}
-
-/**
- * GET RECENT MEMORY
- */
 async function getUserMemory(userId) {
-  const { data, error } = await supabase
-    .from("recruiter_memory")
-    .select("*")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false })
-    .limit(50);
 
-  if (error) {
-    console.error("getUserMemory error:", error.message);
-    return [];
-  }
+    const { data, error } = await supabase
+        .from("recruiter_memory")
+        .select("*")
+        .eq("user_id", userId)
+        .order("created_at", {
+            ascending: false
+        })
+        .limit(100);
 
-  return data || [];
+
+    if (error) {
+
+        console.error(
+            "getUserMemory error:",
+            error.message
+        );
+
+        return [];
+
+    }
+
+
+    return data || [];
+
 }
 
-/**
- * GET STATS
- */
+
+
 async function getUserStats(userId) {
-  const { data, error } = await supabase
-    .from("recruiter_memory")
-    .select("action")
-    .eq("user_id", userId);
 
-  if (error) {
-    console.error("getUserStats error:", error.message);
-    return { saved: 0, rejected: 0, applied: 0 };
-  }
+    const memory = await getUserMemory(userId);
 
-  const stats = { saved: 0, rejected: 0, applied: 0 };
 
-  for (const row of data || []) {
-    if (row.action === "SAVED") stats.saved++;
-    else if (row.action === "REJECTED") stats.rejected++;
-    else if (row.action === "APPLIED") stats.applied++;
-  }
+    return {
 
-  return stats;
+        saved: memory.filter(
+            x => x.action === "SAVED"
+        ).length,
+
+
+        rejected: memory.filter(
+            x => x.action === "REJECTED"
+        ).length,
+
+
+        applied: memory.filter(
+            x => x.action === "APPLIED"
+        ).length
+
+    };
+
 }
+
 
 module.exports = {
-  recordAction,
-  getUserMemory,
-  getUserStats
+
+    recordAction,
+
+    getUserMemory,
+
+    getUserStats
+
 };

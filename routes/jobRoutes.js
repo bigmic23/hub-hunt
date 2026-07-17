@@ -15,6 +15,8 @@ const { generateApplication } = require("../services/ai/applicationBuilder");
 const { recordAction } = require("../services/ai/memory/recruiterMemoryDB");
 
 const { safeIngest } = require("../utils/safeIngest");
+const profileCommand = require("../commands/profile");
+const { sendDailyDigest } = require("../services/dailyDigestService");
 
 console.log("JOB ROUTES LOADED");
 
@@ -148,6 +150,14 @@ Salary expectation: 150000`,
         }
       );
     }
+  });
+
+  // ── Profile  ──
+  bot.command("profile", profileCommand);
+
+  // ── Digest  ──
+  bot.command("digest", async (ctx) => {
+    await sendDailyDigest(bot, String(ctx.from.id));
   });
 
   // ─────────────────────────────────────────
