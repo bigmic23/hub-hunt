@@ -24,10 +24,9 @@ async function sendMessage(to, payload) {
     return res.data;
 
   } catch (err) {
-    console.log("WHATSAPP ERROR:");
-    console.log(err.response?.data || err.message);
-    throw err;
-  }
+      console.log("===== WHATSAPP ERROR =====");
+      console.dir(err.response?.data, { depth: null });
+      throw err;
 }
 
 module.exports = {
