@@ -96,9 +96,9 @@ if (!title) {
   missingFields.push("title");
 }
 
-// SALARY CHECK
+// Salary is optional
 if (!salary) {
-  missingFields.push("salary");
+  merged.salary = "Negotiable";
 }
 
     // SIMPLE RESPONSE LOGIC (STABLE FOR TESTING)
