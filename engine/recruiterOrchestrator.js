@@ -131,7 +131,11 @@ const matches = jobs.filter(job => {
     `${job.title || ""} ${job.location || ""} ${job.country || ""}`
       .toLowerCase();
 
-  const titleMatch = keywords.some(k => text.includes(k));
+  const titleWords = text.split(/\W+/);
+
+  const titleMatch = keywords.some(k =>
+    titleWords.includes(k)
+);
 
   return titleMatch;
 });
