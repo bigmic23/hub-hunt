@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-module.exports = async function fetchAdzunaJobs() {
+module.exports = async function fetchAdzunaJobs({ title, location } = {}) {
   const APP_ID = process.env.ADZUNA_APP_ID;
   const APP_KEY = process.env.ADZUNA_APP_KEY;
 
@@ -24,7 +24,8 @@ module.exports = async function fetchAdzunaJobs() {
           app_id: APP_ID,
           app_key: APP_KEY,
           results_per_page: 20,
-          what: "software"
+          what: title || "",
+          where: location || ""
         },
         timeout: 15000
       });

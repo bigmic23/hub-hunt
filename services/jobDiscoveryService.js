@@ -1,4 +1,4 @@
-const { fetchAllJobs } = require("./discovery");
+const { fetchCachedJobs, fetchAdzunaJobs } = require("./discovery");
 const { rankJobsForUser } = require("./scoringEngine");
 const { buildPreferenceProfile } = require("./ai/learning/preferenceEngine");
 const userProfileService = require("./userProfileService");
@@ -17,27 +17,7 @@ async function refreshCache() {
     CACHE.refreshing = true;
 
     try {
-        let jobs = await fetchAllJobs();
-
-        const seen = new Set();
-
-        jobs = jobs.filter(job => {
-            const key = [
-                (job.title || "")
-                    .toLowerCase()
-                    .replace(/[^\w ]/g, "")
-                    .replace(/\s+/g, " ")
-                    .trim(),
-                (job.company || "")
-                    .toLowerCase()
-                    .trim()
-            ].join("|");
-
-            if (!key || seen.has(key)) return false;
-
-            seen.add(key);
-            return true;
-        });
+        const jobs = await fetchCachedJobs();
 
         CACHE.jobs = jobs;
         CACHE.updated = Date.now();
@@ -50,7 +30,7 @@ async function refreshCache() {
     }
 }
 
-async function loadJobs() {
+async function loadCachedJobs() {
     if (!CACHE.jobs.length) {
         await refreshCache();
         return CACHE.jobs;
@@ -63,7 +43,7 @@ async function loadJobs() {
     return CACHE.jobs;
 }
 
-async function discoverJobs(userId) {
+async function discoverJobs(userId, query = {}) {
 
     const learnedProfile =
         await buildPreferenceProfile(userId);
@@ -77,7 +57,18 @@ async function discoverJobs(userId) {
         userId
     };
 
-    const jobs = await loadJobs();
+    const [cachedJobs, adzunaJobs] = await Promise.all([
+        loadCachedJobs(),
+        fetchAdzunaJobs(query)
+    ]);
+
+    const seen = new Set();
+    const jobs = [...cachedJobs, ...adzunaJobs].filter(job => {
+        if (!job.id) return false;
+        if (seen.has(job.id)) return false;
+        seen.add(job.id);
+        return true;
+    });
 
     return rankJobsForUser(jobs, mergedProfile);
 }

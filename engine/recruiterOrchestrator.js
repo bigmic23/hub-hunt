@@ -112,7 +112,10 @@ if (missingFields.length) {
 
 const { discoverJobs } = require("../services/jobDiscoveryService");
 
-const jobs = await discoverJobs(userId);
+const jobs = await discoverJobs(userId, {
+  title: merged.title,
+  location: merged.location
+});
 
 console.log("TOTAL JOBS:", jobs.length);
 
