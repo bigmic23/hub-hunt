@@ -114,10 +114,24 @@ const { discoverJobs } = require("../services/jobDiscoveryService");
 
 const jobs = await discoverJobs(userId);
 
-const matches = jobs.filter(job =>
-  (job.title || "").toLowerCase().includes(merged.title.toLowerCase()) &&
-  (job.location || "").toLowerCase().includes(merged.location.toLowerCase())
-);
+const keywords = merged.title
+  .toLowerCase()
+  .replace(/\b(a|an|the|job|jobs|need|looking|for)\b/g, "")
+  .split(/\s+/)
+  .filter(Boolean);
+
+const matches = jobs.filter(job => {
+  const title = (job.title || "").toLowerCase();
+  const location = (job.location || "").toLowerCase();
+
+  const titleMatch = keywords.some(k => title.includes(k));
+
+  const locationMatch =
+    !merged.location ||
+    location.includes(merged.location.toLowerCase());
+
+  return titleMatch && locationMatch;
+});
 
 if (!matches.length) {
   return {
