@@ -3,8 +3,9 @@ const axios = require("axios");
 const TOKEN = process.env.WHATSAPP_ACCESS_TOKEN;
 const PHONE_ID = process.env.WHATSAPP_PHONE_NUMBER_ID;
 
-console.log("TOKEN exists:", !!process.env.WHATSAPP_ACCESS_TOKEN);
-console.log("PHONE_ID:", process.env.WHATSAPP_PHONE_NUMBER_ID);
+console.log("TOKEN exists:", !!TOKEN);
+console.log("PHONE_ID env:", process.env.WHATSAPP_PHONE_NUMBER_ID);
+console.log("PHONE_ID constant:", PHONE_ID);
 
 async function sendMessage(to, payload) {
   try {
