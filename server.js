@@ -5,6 +5,7 @@ const app = express();
 app.use(express.json());
 
 const whatsappWebhook = require("./services/whatsapp/webhook");
+const { sendTextMessage } = require("./services/whatsapp");
 
 app.use("/webhook/whatsapp", whatsappWebhook);
 

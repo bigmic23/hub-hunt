@@ -38,11 +38,12 @@ router.post("/", async (req, res) => {
 
     // Text message
     if (message.type === "text") {
-      await sendMessage(
-        phone,
-        buildHomeMessage("Recruiter")
-      );
-    }
+      await sendMessage(phone, {
+       type: "text",
+       text: {
+        body: "✅ Hub Hunt is alive."
+       }
+     });
 
     // Button reply
     if (
