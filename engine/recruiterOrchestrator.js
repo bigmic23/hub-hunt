@@ -101,24 +101,41 @@ if (!salary) {
   merged.salary = "Negotiable";
 }
 
-    // SIMPLE RESPONSE LOGIC (STABLE FOR TESTING)
-    return {
-  nextStep: missingFields.length ? "INPUT" : "DONE",
+    // SIMPLE RESPONSE LOGIC
+if (missingFields.length) {
+  return {
+    nextStep: "INPUT",
+    data: merged,
+    reply: `⚠️ Missing: ${missingFields.join(", ")}`
+  };
+}
 
-  data: {
-    title: merged.title,
-    salary: merged.salary,
-    location: merged.location
-  },
+const { discoverJobs } = require("../services/jobDiscoveryService");
 
+const jobs = await discoverJobs(userId);
+
+const matches = jobs.filter(job =>
+  (job.title || "").toLowerCase().includes(merged.title.toLowerCase()) &&
+  (job.location || "").toLowerCase().includes(merged.location.toLowerCase())
+);
+
+if (!matches.length) {
+  return {
+    nextStep: "DONE",
+    data: merged,
+    reply: "❌ No matching jobs found."
+  };
+}
+
+return {
+  nextStep: "DONE",
+  data: merged,
   reply:
-    missingFields.length
-      ? `⚠️ Missing: ${missingFields.join(", ")}`
-      : `✅ Saved
+`🎯 Found ${matches.length} matching jobs
 
-📌 Title: ${merged.title}
-📍 Location: ${merged.location}
-💰 Salary: ${merged.salary}`
+📌 ${matches[0].title}
+🏢 ${matches[0].company}
+📍 ${matches[0].location}`
 };
 
   } catch (err) {
