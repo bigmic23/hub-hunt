@@ -150,6 +150,7 @@ const matches = jobs.filter(job => {
 });
 
 return titleMatch && locationMatch;
+});
 
 if (!matches.length) {
   return {
@@ -170,7 +171,7 @@ return {
 📍 ${matches[0].location}`
 };
 
-  } catch (err) {
+} catch (err) {
     console.error("ORCHESTRATOR ERROR:", err);
 
     return {
