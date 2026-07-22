@@ -126,18 +126,27 @@ const keywords = merged.title
   .split(/\s+/)
   .filter(Boolean);
 
+const keywords = merged.title
+  .toLowerCase()
+  .replace(/\b(a|an|the|job|jobs|need|looking|for)\b/g, "")
+  .split(/\W+/)
+  .filter(Boolean);
+
 const matches = jobs.filter(job => {
-  const text =
-    `${job.title || ""} ${job.location || ""} ${job.country || ""}`
-      .toLowerCase();
+  const titleWords = (job.title || "")
+    .toLowerCase()
+    .split(/\W+/);
 
-  const titleWords = text.split(/\W+/);
+  const titleMatch = keywords.some(k => titleWords.includes(k));
 
-  const titleMatch = keywords.some(k =>
-    titleWords.includes(k)
-);
+  const place =
+    `${job.location || ""} ${job.country || ""}`.toLowerCase();
 
-  return titleMatch;
+  const locationMatch =
+    !merged.location ||
+    place.includes(merged.location.toLowerCase());
+
+  return titleMatch && locationMatch;
 });
 
 if (!matches.length) {
