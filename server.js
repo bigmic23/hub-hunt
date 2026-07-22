@@ -4,8 +4,7 @@ const app = express();
 
 app.use(express.json());
 
-const whatsappWebhook = require("./routes/whatsappWebhook");
-const { sendTextMessage } = require("./services/whatsapp");
+const whatsappWebhook = require("./services/whatsapp/webhook");
 
 app.use("/webhook/whatsapp", whatsappWebhook);
 
@@ -33,4 +32,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on ${PORT}`);
 });
-
