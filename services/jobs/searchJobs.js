@@ -1,20 +1,19 @@
-async function searchJobs(query) {
-  return [
-    {
-      id: 1,
-      title: "Registered Nurse",
-      company: "Charité Hospital",
-      location: "Berlin, Germany",
-      salary: "€3,800/month"
-    },
-    {
-      id: 2,
-      title: "ICU Nurse",
-      company: "Vivantes",
-      location: "Berlin, Germany",
-      salary: "€4,200/month"
-    }
-  ];
+const { discoverJobs } = require("../jobDiscoveryService");
+
+async function searchJobs(query, userId = "whatsapp") {
+  const jobs = await discoverJobs(userId);
+
+  if (!query) return jobs;
+
+  const q = query.toLowerCase();
+
+  return jobs.filter(job => {
+    return (
+      (job.title || "").toLowerCase().includes(q) ||
+      (job.location || "").toLowerCase().includes(q) ||
+      (job.company || "").toLowerCase().includes(q)
+    );
+  });
 }
 
 module.exports = {
