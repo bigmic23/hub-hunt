@@ -127,16 +127,13 @@ const keywords = merged.title
   .filter(Boolean);
 
 const matches = jobs.filter(job => {
-  const title = (job.title || "").toLowerCase();
-  const location = (job.location || "").toLowerCase();
+  const text =
+    `${job.title || ""} ${job.location || ""} ${job.country || ""}`
+      .toLowerCase();
 
-  const titleMatch = keywords.some(k => title.includes(k));
+  const titleMatch = keywords.some(k => text.includes(k));
 
-  const locationMatch =
-    !merged.location ||
-    location.includes(merged.location.toLowerCase());
-
-  return titleMatch && locationMatch;
+  return titleMatch;
 });
 
 if (!matches.length) {
