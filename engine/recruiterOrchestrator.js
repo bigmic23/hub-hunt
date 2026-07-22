@@ -114,6 +114,12 @@ const { discoverJobs } = require("../services/jobDiscoveryService");
 
 const jobs = await discoverJobs(userId);
 
+console.log("TOTAL JOBS:", jobs.length);
+
+if (jobs.length) {
+  console.log("FIRST JOB:", JSON.stringify(jobs[0], null, 2));
+}
+
 const keywords = merged.title
   .toLowerCase()
   .replace(/\b(a|an|the|job|jobs|need|looking|for)\b/g, "")
