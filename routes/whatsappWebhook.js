@@ -34,10 +34,11 @@ router.post("/", async (req, res) => {
 
             console.log(`${from}: ${text}`);
 
-            await sendTextMessage(
-                from,
-                `You said: ${text}`
-            );
+            const { handleWhatsAppMessage } = require("../services/whatsappConversation");
+
+            const reply = await handleWhatsAppMessage(from, text);
+
+            await sendTextMessage(from, reply);
         }
 
         res.sendStatus(200);
