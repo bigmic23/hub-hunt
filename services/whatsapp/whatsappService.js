@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-const TOKEN = process.env.WHATSAPP_ACCESSS_TOKEN;
+const TOKEN = process.env.WHATSAPP_ACCESS_TOKEN;
 const PHONE_ID = process.env.WHATSAPP_PHONE_NUMBER_ID;
 
 console.log("TOKEN exists:", !!process.env.WHATSAPP_ACCESS_TOKEN);
@@ -30,6 +30,8 @@ async function sendMessage(to, payload) {
       console.log("===== WHATSAPP ERROR =====");
       console.dir(err.response?.data, { depth: null });
       throw err;
+  }
+
 }
 
 module.exports = {
