@@ -25,6 +25,9 @@ router.get("/", (req, res) => {
 
 router.post("/", async (req, res) => {
   try {
+
+    console.log(JSON.stringify(req.body, null, 2));
+
     const entry = req.body.entry?.[0];
     const change = entry?.changes?.[0];
     const message = change?.value?.messages?.[0];
