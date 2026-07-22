@@ -10,12 +10,15 @@ async function callLLM(prompt) {
   return res.choices[0].message.content;
 }
 
-module.exports.callLLM = async (text) => {
-  return {
-    title: null,
-    mode: null,
-    city: null,
-    salary: null,
-    raw: text
-  };
+module.exports = {
+  client,
+  callLLM: async (text) => {
+    return {
+      title: null,
+      mode: null,
+      city: null,
+      salary: null,
+      raw: text
+    };
+  }
 };

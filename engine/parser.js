@@ -1,4 +1,4 @@
-const { client } = require("../ai/client");
+const { client } = require("../services/aiClient");
 
 async function extractJob(text) {
   const res = await client.chat.completions.create({
