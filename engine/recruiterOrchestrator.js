@@ -13,19 +13,26 @@ function parseJobText(text = "") {
     clean.match(/salary\s*:?\s*(\d+)/i) ||
     clean.match(/\b(\d{4,7})\b/);
 
-  const location =
-    /\bremote\b/i.test(clean)
-      ? "Remote"
-      : /\bhybrid\b/i.test(clean)
-      ? "Hybrid"
-      : /\bon[- ]?site\b/i.test(clean)
-      ? "On-site"
-      : "";
+  const locationMatch = clean.match(
+    /\b(?:in|at)\s+([A-Z][a-zA-Z]+(?:\s+[A-Z][a-zA-Z]+)*)/i
+  );
+
+  let location = "";
+
+  if (/\bremote\b/i.test(clean)) {
+    location = "Remote";
+  } else if (/\bhybrid\b/i.test(clean)) {
+    location = "Hybrid";
+  } else if (/\bon[- ]?site\b/i.test(clean)) {
+    location = "On-site";
+  } else if (locationMatch) {
+    location = locationMatch[1];
+  }
 
   let title = clean
-    .replace(/\bremote\b/ig, "")
-    .replace(/\bhybrid\b/ig, "")
-    .replace(/\bon[- ]?site\b/ig, "")
+    .replace(/\b(i need|looking for|searching for|find me)\b/ig, "")
+    .replace(/\b(remote|hybrid|on[- ]?site)\b/ig, "")
+    .replace(/\b(?:in|at)\s+[A-Z][a-zA-Z]+(?:\s+[A-Z][a-zA-Z]+)*/ig, "")
     .replace(/salary\s*:?\s*\d+/ig, "")
     .replace(/\b\d{4,7}\b/g, "")
     .replace(/\s+/g, " ")
