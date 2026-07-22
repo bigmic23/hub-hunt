@@ -112,6 +112,12 @@ if (missingFields.length) {
 
 const { discoverJobs } = require("../services/jobDiscoveryService");
 
+const searchTitle = merged.title
+  .toLowerCase()
+  .replace(/\b(a|an|the|job|jobs|need|looking|for)\b/g, "")
+  .replace(/\s+/g, " ")
+  .trim();
+
 const jobs = await discoverJobs(userId, {
   title: merged.title,
   location: merged.location
