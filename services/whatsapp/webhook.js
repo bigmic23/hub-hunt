@@ -1,16 +1,13 @@
 const express = require("express");
-
 const { sendMessage } = require("./whatsappService");
-const session = require("../state/sessionManager");
+const { handleText } = require("../conversation/jobConversation");
 
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  const VERIFY = process.env.WHATSAPP_VERIFY_TOKEN;
-
   if (
     req.query["hub.mode"] === "subscribe" &&
-    req.query["hub.verify_token"] === VERIFY
+    req.query["hub.verify_token"] === process.env.WHATSAPP_VERIFY_TOKEN
   ) {
     return res.send(req.query["hub.challenge"]);
   }
@@ -20,31 +17,24 @@ router.get("/", (req, res) => {
 
 router.post("/", async (req, res) => {
   try {
-    console.log(JSON.stringify(req.body, null, 2));
-
     const message =
       req.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
 
     if (!message) return res.sendStatus(200);
 
-    const phone = message.from;
-
     if (message.type === "text") {
-      session.clear(phone);
+      const reply = await handleText(
+        message.from,
+        message.text.body
+      );
 
-      await sendMessage(phone, {
-        type: "text",
-        text: {
-          body:
-            "👋 Welcome to Hub Hunt AI.\n\nWhat kind of job are you looking for?"
-        }
-      });
+      await sendMessage(message.from, reply);
     }
 
     res.sendStatus(200);
 
   } catch (err) {
-    console.error("[WHATSAPP]", err.response?.data || err);
+    console.error(err.response?.data || err);
     res.sendStatus(500);
   }
 });
