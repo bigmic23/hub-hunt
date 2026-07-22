@@ -123,12 +123,6 @@ if (jobs.length) {
 const keywords = merged.title
   .toLowerCase()
   .replace(/\b(a|an|the|job|jobs|need|looking|for)\b/g, "")
-  .split(/\s+/)
-  .filter(Boolean);
-
-const keywords = merged.title
-  .toLowerCase()
-  .replace(/\b(a|an|the|job|jobs|need|looking|for)\b/g, "")
   .split(/\W+/)
   .filter(Boolean);
 
@@ -146,8 +140,16 @@ const matches = jobs.filter(job => {
     !merged.location ||
     place.includes(merged.location.toLowerCase());
 
-  return titleMatch && locationMatch;
+  console.log("QUERY LOCATION:", merged.location);
+  console.log("JOB PLACE:", place);
+
+  console.log({
+  title: job.title,
+  titleMatch,
+  locationMatch
 });
+
+return titleMatch && locationMatch;
 
 if (!matches.length) {
   return {
