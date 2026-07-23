@@ -15,6 +15,8 @@ async function handleMessage({ userId, text, state }) {
     state
 });
 
+  console.log("🔥 AI CORE reached", platform, text);
+
   return result;
 }
 

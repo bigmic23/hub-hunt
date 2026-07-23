@@ -270,6 +270,19 @@ Use /mycvs to view all your CVs.`,
       );
     }
 
+    // ── Candidate job search ──
+   if (/i need|looking for|find me|searching for/i.test(text)) {
+     const { handleMessage } = require("../core/conversation/conversationEngine");
+
+     const result = await handleMessage({
+       userId,
+       text,
+       state: {}
+     });
+
+     return ctx.reply(result.reply);
+   }
+
     // ── Job processing ──
     const looksLikeJob =
       /salary|\d{5,7}|remote|hybrid|onsite|lagos|developer|support|engineer|analyst|intern/i.test(text);
