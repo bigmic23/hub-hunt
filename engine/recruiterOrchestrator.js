@@ -152,16 +152,7 @@ const matches = jobs.filter(job => {
     !merged.location ||
     place.includes(merged.location.toLowerCase());
 
-  console.log("QUERY LOCATION:", merged.location);
-  console.log("JOB PLACE:", place);
-
-  console.log({
-  title: job.title,
-  titleMatch,
-  locationMatch
-});
-
-return titleMatch && locationMatch;
+  return titleMatch && locationMatch;
 });
 
 if (!matches.length) {
