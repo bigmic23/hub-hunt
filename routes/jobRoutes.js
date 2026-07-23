@@ -275,6 +275,7 @@ Use /mycvs to view all your CVs.`,
      const { handleMessage } = require("../core/conversation/conversationEngine");
 
      const result = await handleMessage({
+       platform: "telegram",
        userId,
        text,
        state: {}

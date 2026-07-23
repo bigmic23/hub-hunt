@@ -7,6 +7,7 @@ async function handleText(phone, text) {
   const state = session.get(phone);
 
   const result = await handleMessage({
+    platform: "whatsapp",
     userId: phone,
     text,
     state
