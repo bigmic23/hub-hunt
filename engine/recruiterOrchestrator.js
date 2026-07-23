@@ -118,6 +118,9 @@ const searchTitle = merged.title
   .replace(/\s+/g, " ")
   .trim();
 
+console.log("SEARCH TITLE FOR ADZUNA:", searchTitle);
+console.log("SEARCH LOCATION FOR ADZUNA:", merged.location);
+
 const jobs = await discoverJobs(userId, {
   title: merged.title,
   location: merged.location
