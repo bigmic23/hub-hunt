@@ -1,10 +1,12 @@
 const session = require("../state/sessionManager");
-const { processRecruitment } = require("../../engine/recruiterOrchestrator");
+const { handleMessage } = require("../../core/conversation/conversationEngine");
 
+// WhatsApp-specific adapter: translates the engine's plain response
+// into WhatsApp's expected message shape.
 async function handleText(phone, text) {
   const state = session.get(phone);
 
-  const result = await processRecruitment({
+  const result = await handleMessage({
     userId: phone,
     text,
     state
