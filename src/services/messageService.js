@@ -1,23 +1,21 @@
-const memoryService = require("./memoryService");
-const aiService = require("./aiService");
+const { handleMessage: conversation } = require("../../core/conversation/conversationEngine");
 
 async function handleMessage(msg, bot) {
-  const chatId = msg.chat.id;
+  const chatId = String(msg.chat.id);
   const text = msg.text;
 
   if (!text) return;
 
-  // 1. Load user memory
-  const memory = await memoryService.getUser(chatId);
+  const result = await conversation({
+    userId: chatId,
+    text,
+    state: {}
+  });
 
-  // 2. Process with AI / logic
-  const response = await aiService.process(text, memory);
-
-  // 3. Save updated memory if needed
-  await memoryService.updateUser(chatId, response.updatedMemory);
-
-  // 4. Respond
-  await bot.sendMessage(chatId, response.reply);
+// 2. Respond
+  await bot.sendMessage(chatId, result.reply);
 }
 
-module.exports = { handleMessage };
+module.exports = {
+  handleMessage
+};

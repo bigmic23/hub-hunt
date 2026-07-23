@@ -1,7 +1,7 @@
 function generateApplication(job = {}, profile = {}) {
-  const name = profile?.name || "Sonwu Michael";
-  const email = profile?.email || "michael.sonwu.careers@gmail.com";
-  const phone = profile?.phone || "+234 803 694 1994";
+  const name = profile?.name || "[Your Name]";
+  const email = profile?.email || "[your.email@example.com]";
+  const phone = profile?.phone || "[Your Phone Number]";
 
   const cvList = profile?.cvList || {};
   const matchedCvName = job?.matchedCv || "main";
@@ -21,7 +21,7 @@ function generateApplication(job = {}, profile = {}) {
     ? `a Healthcare Assistant with a Level 3 Diploma in Health and Social Care, certified in Basic Life Support, CPR, First Aid, and Mental Health Awareness`
     : `a Customer Experience and Client Support Professional with over 5 years of experience in customer service, CRM management, complaint resolution, and administrative support`;
 
-  const subject = `Application for ${jobTitle} – Sonwu Michael`;
+  const subject = `Application for ${jobTitle} – ${name}`;
 
   const body =
 `Dear Hiring Manager,

@@ -1,0 +1,277 @@
+=== FOLDER STRUCTURE ===
+./.env
+./.gitignore
+./README.md
+./ai/recruiterAI.js
+./bot.js
+./commands/profile.js
+./core/confidence.js
+./core/decision/jobDecisionEngine.js
+./core/decision/pipelineStabilizer.js
+./core/jobWorkflow.js
+./core/validator.js
+./core/workflow/jobBatchProcessor.js
+./core/workflow/jobWorkflow.backup.js
+./core/workflow/jobWorkflow.js
+./core/workflow/jobWorkflow.js.save
+./core/workflow/safeRunWorkflow.js
+./data/jobPipeline.json
+./data/profiles.json
+./data/ranking-memory.json
+./data/sessions.json
+./db.js
+./db/identity.json
+./db/index.js
+./db/init.js
+./db/migrations.sql
+./db/schema.sql
+./db/vectorMemory.json
+./decision/recruiterAgent.js
+./decision/riskAnalyzer.js
+./decision/scoringEngine.js
+./ecosystem.config.js
+./engine/aiExtractor.js
+./engine/client.js
+./engine/detectMissingFields.js
+./engine/jobAgent.js
+./engine/logger.js
+./engine/memoryStore.js
+./engine/mergeState.js
+./engine/missingFields.js
+./engine/orchestrator.js
+./engine/parser.js
+./engine/processRecruitment.disabled.js
+./engine/queue.js
+./engine/queue.js.save
+./engine/recruiterAI.js
+./engine/recruiterAIEngine.js
+./engine/recruiterEngine.js
+./engine/recruiterOrchestrator.js
+./engine/recruiterOrchestrator_backup.js
+./engine/recruiterParser.js
+./engine/recruitmentEngine.disabled.js
+./engine/router.js
+./engine/safeAI.js
+./engine/scorer.js
+./engine/sessionService.js
+./engine/sessionStore.js
+./engine/state.js
+./engine/worker.js
+./feedback/feedbackCollector.js
+./hubhunt_overview.txt
+./intelligence/city/cityDetector.js
+./intelligence/city/cityResolver.js
+./intelligence/contextBuilder.js
+./intelligence/cvParser.js
+./intelligence/fakeJobDetectorV2.js
+./intelligence/falseJobDetector.js
+./intelligence/jobDeduplicator.js
+./intelligence/jobExtractor.js
+./intelligence/jobFilterEngine.js
+./intelligence/jobGate.js
+./intelligence/jobIdentity.js
+./intelligence/jobIntentParserV2.js
+./intelligence/jobMergeEngine.js
+./intelligence/jobNormalizer.js
+./intelligence/jobParser.js
+./intelligence/jobParserLLM.js
+./intelligence/jobSchema.js
+./intelligence/jobSegmenter.js
+./intelligence/jobStructureBuilderV2.js
+./intelligence/jobValidator.js
+./intelligence/mode/modeDetector.js
+./intelligence/parser/jobIntentParserV2.js
+./intelligence/safety/jobSanitizer.js
+./intelligence/salary/salaryNormalizer.js
+./intelligence/salary/salaryValidator.js
+./lib/redis.js
+./memory/userMemoryService.js
+./package-lock.json
+./package.json
+./prisma/schema.prisma
+./routes/jobRoutes.BROKEN.js
+./routes/jobRoutes.backup.js
+./routes/jobRoutes.before-clean.js
+./routes/jobRoutes.clean.js
+./routes/jobRoutes.js
+./routes/jobRoutes.js.bak
+./routes/jobRoutes.old.js
+./sampleSource.js
+./savedJobService.js
+./scrapeJobsAndSend.js
+./server.js
+./services/ai/adaptiveWeightsEngine.js
+./services/ai/applicationBuilder.js
+./services/ai/banditEngine.js
+./services/ai/cvMatcherEngine.js
+./services/ai/features/jobFeatureExtractor.js
+./services/ai/feedEngine.js
+./services/ai/jobSummaryService.js
+./services/ai/learning/preferenceEngine.js
+./services/ai/memory/recruiterLearningEngine.js
+./services/ai/memory/recruiterMemoryDB.js
+./services/ai/memoryDecayEngine.js
+./services/ai/policyOptimizer.js
+./services/ai/profile/cvLearningEngine.js
+./services/ai/profile/userCvProfile.js
+./services/ai/recruiterBrain.js
+./services/ai/recruiterDecisionEngine.js
+./services/ai/recruiterInsightFormatter.js
+./services/ai/rewardEngine.js
+./services/ai/userVectorProfile.js
+./services/aiClient.js
+./services/aiJobParser.js
+./services/analyticsService.js
+./services/cityIntelligence.js
+./services/conversation/jobConversation.js
+./services/cvMemoryEngine.js
+./services/dailyDigestScheduler.js
+./services/dailyDigestService.js
+./services/db.js
+./services/discovery/api/arbeitnow.js
+./services/discovery/company/siemens.js
+./services/discovery/index.js
+./services/discovery/jobSourceManager.js
+./services/discovery/providers/arbeitnow.js
+./services/discovery/providers/remoteok.js
+./services/discovery/rss/remoteok.js
+./services/discovery/rss/sampleSource.js
+./services/discovery/sources/adzuna.js
+./services/discovery/sources/arbeitnow.js
+./services/discovery/sources/myjobmag.js
+./services/discovery/sources/remoteok.js
+./services/discovery/sources/remotive.js
+./services/eventBus.js
+./services/feedMemoryService.js
+./services/feedStateManager.js
+./services/feedStateService.js
+./services/identityEngine.js
+./services/inputAI.js
+./services/interviewReminder.js
+./services/jobDedupeService.js
+./services/jobDiscoveryService.js
+./services/jobFeedService.backup.js
+./services/jobFeedService.before-clean.js
+./services/jobFeedService.clean.js
+./services/jobFeedService.js
+./services/jobFilterService.js
+./services/jobMatcher.js
+./services/jobNormalizer.js
+./services/jobParserLLM.js
+./services/jobPipelineService.js
+./services/jobQualityFilter.js
+./services/jobRanker.js
+./services/jobRankingService.backup.js
+./services/jobRankingService.js
+./services/jobRepository.js
+./services/jobService.js
+./services/jobStateManager.js
+./services/jobs/searchJobs.js
+./services/localJobParser.js
+./services/memoryEngine.js
+./services/personalRanker.js
+./services/recommendation/scoreJob.js
+./services/recruiterAI.js
+./services/recruiterAgent.js
+./services/recruiterBrainEngine.js
+./services/recruiterMemoryService.js
+./services/recruiterQueueService.js
+./services/remindWorker.js
+./services/reminderScheduler.js
+./services/reminderWorker.js
+./services/responseService.js
+./services/riskAnalyzer.js
+./services/savedJobService.js
+./services/scoringEngine.js
+./services/scoringEngine/explainer.js
+./services/sessionService.js
+./services/smartJobParser.js
+./services/startupValidator.js
+./services/state/sessionManager.js
+./services/telegramService.js
+./services/userProfileService.js
+./services/whatsapp.js
+./services/whatsapp/messageBuilder.js
+./services/whatsapp/webhook.js
+./services/whatsapp/whatsappService.js
+./services/workflowListeners.js
+./sessions/interviewSession.js
+./sessions/jobsSession.js
+./sessions/jobsSession.json
+./src/db/supabase.js
+./src/services/aiService.js
+./src/services/memoryService.js
+./src/services/messageService.js
+./src/telegram/bot.js
+./temp/current_job_functions.js
+./temp/next_job_handler.js
+./temp/scrapeJobsAndSend.js
+./testDiscovery.js
+./testJobDiscovery.js
+./testSend.js
+./utils/autoRepairJob.js
+./utils/flyerGenerator.js
+./utils/safeIngest.js
+./utils/sanitizeJob.js
+./utils/validateJob.js
+./work.js
+./worker.js
+
+=== package.json ===
+{
+  "name": "hub-hunt",
+  "version": "1.0.0",
+  "description": "AI Career Assistant - Find Better Jobs. Apply Smarter.",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "telegram",
+    "jobs",
+    "career",
+    "ai",
+    "hub-hunt"
+  ],
+  "author": "BigMic",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "@supabase/supabase-js": "^2.108.2",
+    "axios": "^1.18.1",
+    "bullmq": "^5.79.0",
+    "chrono-node": "^2.9.1",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "fast-xml-parser": "^5.10.1",
+    "form-data": "^4.0.6",
+    "ioredis": "^5.11.1",
+    "lowdb": "^7.0.1",
+    "node-cron": "^4.5.0",
+    "openai": "^6.42.0",
+    "pg": "^8.21.0",
+    "prisma": "^5.22.0",
+    "sql.js": "^1.14.1",
+    "telegraf": "^4.16.3"
+  }
+}
+
+=== .env keys (names only, no values) ===
+BOT_TOKEN
+DATABASE_URL
+OPENAI_API_KEY
+TELEGRAM_CHANNEL_ID
+SUPABASE_URL
+SUPABASE_SERVICE_ROLE_KEY
+ADZUNA_APP_ID
+ADZUNA_APP_KEY
+ADZUNA_COUNTRIES
+DIGEST_HOUR
+DIGEST_MINUTE
+PORT
+WHATSAPP_ACCESS_TOKEN
+WHATSAPP_PHONE_NUMBER_ID
+WHATSAPP_BUSINESS_ACCOUNT_ID
+WHATSAPP_VERIFY_TOKEN

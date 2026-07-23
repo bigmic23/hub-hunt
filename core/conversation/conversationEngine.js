@@ -3,16 +3,17 @@
 // and get back a plain, channel-neutral response.
 // This file knows nothing about WhatsApp or Telegram message formats.
 
-const { processRecruitment } = require("../../engine/recruiterOrchestrator");
+const AI = require("../../services/ai/core");
 
 async function handleMessage({ userId, text, state }) {
   // processRecruitment already returns { nextStep, data, reply }
   // in a plain, channel-neutral shape — we just pass it through.
-  const result = await processRecruitment({
-    userId,
+  const result = await AI.process({
+    platform: "whatsapp",
     text,
+    userId,
     state
-  });
+});
 
   return result;
 }
