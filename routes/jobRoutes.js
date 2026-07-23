@@ -121,6 +121,48 @@ Salary expectation: 150000`,
     return ctx.reply(`🗑 CV "${cvName}" deleted.`);
   });
 
+// ─────────────────────────────────────────
+  // /setprofile — Save name, email, phone
+  // ─────────────────────────────────────────
+  bot.command("setprofile", async (ctx) => {
+    const userId = String(ctx.from.id);
+
+    await sessionService.updateSession(userId, {
+      step: "WAITING_PROFILE_INFO"
+    });
+
+    return ctx.reply(
+`📝 Send your details in this exact format:
+
+Name: John Doe
+Email: john@example.com
+Phone: +234 812 345 6789`
+    );
+  });
+
+  // ─────────────────────────────────────────
+  // /myprofile — View saved contact info
+  // ─────────────────────────────────────────
+  bot.command("myprofile", async (ctx) => {
+    const userId = String(ctx.from.id);
+    const profile = await userProfileService.get(userId) || {};
+
+    if (!profile.name && !profile.email && !profile.phone) {
+      return ctx.reply("No contact info saved yet.\n\nUse /setprofile to add your name, email, and phone.");
+    }
+
+    return ctx.reply(
+`👤 *Your Contact Info*
+
+Name: ${profile.name || "Not set"}
+Email: ${profile.email || "Not set"}
+Phone: ${profile.phone || "Not set"}
+
+Use /setprofile to update.`,
+      { parse_mode: "Markdown" }
+    );
+  });
+
   // ─────────────────────────────────────────
   // /jobs — Trigger job feed
   // ─────────────────────────────────────────
@@ -171,6 +213,38 @@ Salary expectation: 150000`,
     if (text.startsWith("/")) return;
 
     const userId = String(ctx.from.id);
+    const session = await sessionService.getSession(userId);
+
+  // ── Save profile info ──
+    if (session?.step === "WAITING_PROFILE_INFO") {
+      const nameMatch = text.match(/name:\s*(.+)/i);
+      const emailMatch = text.match(/email:\s*(.+)/i);
+      const phoneMatch = text.match(/phone:\s*(.+)/i);
+
+      if (!nameMatch && !emailMatch && !phoneMatch) {
+        return ctx.reply(
+`⚠️ I couldn't read that. Please use this format:
+
+Name: John Doe
+Email: john@example.com
+Phone: +234 812 345 6789`
+        );
+      }
+
+      const existing = await userProfileService.get(userId) || {};
+
+      await userProfileService.save(userId, {
+        ...existing,
+        name: nameMatch?.[1]?.trim() || existing.name,
+        email: emailMatch?.[1]?.trim() || existing.email,
+        phone: phoneMatch?.[1]?.trim() || existing.phone
+      });
+
+      await sessionService.updateSession(userId, { step: null });
+
+      return ctx.reply("✅ Profile saved! You can now use /myprofile to view it, or /setprofile to update anytime.");
+    }
+
     const session = await sessionService.getSession(userId);
 
     // ── Save CV ──
