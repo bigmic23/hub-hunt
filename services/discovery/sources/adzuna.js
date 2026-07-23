@@ -1,5 +1,33 @@
 const axios = require("axios");
 
+const CITY_COUNTRY_MAP = {
+  berlin: "de", munich: "de", hamburg: "de", frankfurt: "de", cologne: "de",
+  london: "gb", manchester: "gb", birmingham: "gb", edinburgh: "gb", glasgow: "gb",
+  toronto: "ca", vancouver: "ca", montreal: "ca", calgary: "ca", ottawa: "ca",
+  sydney: "au", melbourne: "au", brisbane: "au", perth: "au",
+  johannesburg: "za", "cape town": "za", pretoria: "za", durban: "za",
+  "new york": "us", "los angeles": "us", chicago: "us", houston: "us", boston: "us",
+  vienna: "at", salzburg: "at",
+  brussels: "be", antwerp: "be",
+  "sao paulo": "br", "rio de janeiro": "br",
+  zurich: "ch", geneva: "ch",
+  madrid: "es", barcelona: "es", valencia: "es",
+  paris: "fr", lyon: "fr", marseille: "fr",
+  mumbai: "in", delhi: "in", bangalore: "in", bengaluru: "in",
+  milan: "it", rome: "it", turin: "it",
+  "mexico city": "mx", guadalajara: "mx",
+  amsterdam: "nl", rotterdam: "nl",
+  auckland: "nz", wellington: "nz",
+  warsaw: "pl", krakow: "pl",
+  singapore: "sg"
+};
+
+function resolveCountries(location, configuredCountries) {
+  const cityKey = (location || "").trim().toLowerCase();
+  const matchedCountry = CITY_COUNTRY_MAP[cityKey];
+  return matchedCountry ? [matchedCountry] : configuredCountries;
+}
+
 module.exports = async function fetchAdzunaJobs({ title, location } = {}) {
   const APP_ID = process.env.ADZUNA_APP_ID;
   const APP_KEY = process.env.ADZUNA_APP_KEY;
@@ -9,9 +37,12 @@ module.exports = async function fetchAdzunaJobs({ title, location } = {}) {
     return [];
   }
 
-  const countries = (process.env.ADZUNA_COUNTRIES || "ng")
+  const configuredCountries = (process.env.ADZUNA_COUNTRIES || "gb")
     .split(",")
-    .map(c => c.trim().toLowerCase());
+    .map(c => c.trim().toLowerCase())
+    .filter(Boolean);
+
+  const countries = resolveCountries(location, configuredCountries);
 
   const jobs = [];
 
