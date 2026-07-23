@@ -245,7 +245,6 @@ Phone: +234 812 345 6789`
       return ctx.reply("✅ Profile saved! You can now use /myprofile to view it, or /setprofile to update anytime.");
     }
 
-    const session = await sessionService.getSession(userId);
 
     // ── Save CV ──
     if (session?.step === "WAITING_CV") {
