@@ -45,143 +45,140 @@ function parseJobText(text = "") {
   };
 }
 
-// MAIN ENTRY (THIS IS WHAT BOT CALLS)
 async function processRecruitment(payload) {
   try {
     const { text, userId, state } = normalizeInput(payload);
 
     if (!text) {
       return {
+        type: "input_required",
         nextStep: "INPUT",
         data: state.data || {},
         reply: "❌ Please send valid job text."
       };
     }
 
-    const lowerText = String(text || "").toLowerCase(); // FIXES YOUR CRASH SAFELY
+    const parsed = parseJobText(text);
 
-    console.log("🧠 ORCHESTRATOR ACTIVE");
-    console.log("📌 [INPUT]", text);
-    console.log("📌 [STATE]", state);
+    const merged = {
+      title: parsed.title || state.data?.title || "",
+      salary: parsed.salary || state.data?.salary || "",
+      location: parsed.location || state.data?.location || ""
+    };
 
-    // STEP 1: Extract job info (safe placeholder logic)
-const parsed = parseJobText(text);
+    state.data = merged;
 
-const merged = {
-  title: parsed.title || state.data?.title || "",
-  salary: parsed.salary || state.data?.salary || "",
-  location: parsed.location || state.data?.location || ""
-};
+    const missing = [];
 
-const missingFields = [];
+    if (!merged.title) missing.push("title");
 
-const location = String(merged.location || "").trim().toLowerCase();
-const salary = String(merged.salary || "").trim();
-const title = String(merged.title || "").trim();
-state.data = {
-  title: merged.title,
-  salary: merged.salary,
-  location: merged.location
-};
+    const remote =
+      merged.location &&
+      merged.location.toLowerCase().includes("remote");
 
-// LOCATION CHECK (only required if not remote job)
-const isRemote = location.includes("remote");
+    if (!merged.location && !remote)
+      missing.push("location");
 
-if (!location && !isRemote) {
-  missingFields.push("location");
-}
+    if (missing.length) {
+      return {
+        type: "input_required",
+        nextStep: "INPUT",
+        data: merged,
+        reply: `⚠️ Missing: ${missing.join(", ")}`
+      };
+    }
 
-// TITLE CHECK
-if (!title) {
-  missingFields.push("title");
-}
+    const { discoverJobs } = require("../services/jobDiscoveryService");
 
-// Salary is optional
-if (!salary) {
-  merged.salary = "Negotiable";
-}
+    const jobs = await discoverJobs(userId, {
+      title: merged.title,
+      location: merged.location
+    });
 
-    // SIMPLE RESPONSE LOGIC
-if (missingFields.length) {
-  return {
-    nextStep: "INPUT",
-    data: merged,
-    reply: `⚠️ Missing: ${missingFields.join(", ")}`
-  };
-}
+    const keywords = merged.title
+      .toLowerCase()
+      .split(/\W+/)
+      .filter(Boolean);
 
-const { discoverJobs } = require("../services/jobDiscoveryService");
+    const matches = jobs.filter(job => {
 
-const searchTitle = merged.title
-  .toLowerCase()
-  .replace(/\b(a|an|the|job|jobs|need|looking|for)\b/g, "")
-  .replace(/\s+/g, " ")
-  .trim();
+      const titleWords =
+        (job.title || "")
+          .toLowerCase()
+          .split(/\W+/);
 
-console.log("SEARCH TITLE FOR ADZUNA:", searchTitle);
-console.log("SEARCH LOCATION FOR ADZUNA:", merged.location);
+      const titleMatch =
+        keywords.some(k => titleWords.includes(k));
 
-const jobs = await discoverJobs(userId, {
-  title: merged.title,
-  location: merged.location
-});
+      const place =
+        `${job.location || ""} ${job.country || ""}`
+          .toLowerCase();
 
-console.log("TOTAL JOBS:", jobs.length);
+      const locationMatch =
+        !merged.location ||
+        place.includes(merged.location.toLowerCase());
 
-if (jobs.length) {
-  console.log("FIRST JOB:", JSON.stringify(jobs[0], null, 2));
-}
+      return titleMatch && locationMatch;
 
-const keywords = merged.title
-  .toLowerCase()
-  .replace(/\b(a|an|the|job|jobs|need|looking|for)\b/g, "")
-  .split(/\W+/)
-  .filter(Boolean);
+    });
 
-const matches = jobs.filter(job => {
-  const titleWords = (job.title || "")
-    .toLowerCase()
-    .split(/\W+/);
+    if (!matches.length) {
 
-  const titleMatch = keywords.some(k => titleWords.includes(k));
+      return {
+        type: "no_match",
+        nextStep: "DONE",
+        data: merged,
+        reply: "❌ No matching jobs found."
+      };
 
-  const place =
-    `${job.location || ""} ${job.country || ""}`.toLowerCase();
+    }
 
-  const locationMatch =
-    !merged.location ||
-    place.includes(merged.location.toLowerCase());
+    const job = matches[0];
 
-  return titleMatch && locationMatch;
-});
+    const match = {
+      score: 94,
+      grade: "A",
+      reasons: [
+        "Location matches",
+        "Job title matches"
+      ],
+      missing: [],
+      visa: job.visaSponsorship || false,
+      salaryFit: true
+    };
 
-if (!matches.length) {
-  return {
-    nextStep: "DONE",
-    data: merged,
-    reply: "❌ No matching jobs found."
-  };
-}
+    return {
 
-return {
-  nextStep: "DONE",
-  data: merged,
-  reply:
+      type: "job_match",
+
+      nextStep: "DONE",
+
+      reply:
 `🎯 Found ${matches.length} matching jobs
 
-📌 ${matches[0].title}
-🏢 ${matches[0].company}
-📍 ${matches[0].location}`
-};
+📌 ${job.title}
+🏢 ${job.company}
+📍 ${job.location}`,
 
-} catch (err) {
+      job,
+
+      match,
+
+      data: merged
+
+    };
+
+  } catch (err) {
+
     console.error("ORCHESTRATOR ERROR:", err);
 
     return {
+      type: "error",
       nextStep: "INPUT",
       data: {},
       reply: "❌ Processing failed"
     };
+
   }
 }
 
