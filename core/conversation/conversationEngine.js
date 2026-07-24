@@ -5,15 +5,13 @@
 
 const AI = require("../../services/ai/core");
 
-async function handleMessage({ userId, text, state }) {
-  // processRecruitment already returns { nextStep, data, reply }
-  // in a plain, channel-neutral shape — we just pass it through.
+async function handleMessage({ platform, userId, text, state }) {
   const result = await AI.process({
-    platform: "whatsapp",
+    platform,
     text,
     userId,
     state
-});
+  });
 
   console.log("🔥 AI CORE reached", platform, text);
 
